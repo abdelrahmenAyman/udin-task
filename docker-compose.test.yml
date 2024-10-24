@@ -1,0 +1,32 @@
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    command: >
+      bash -c 'if [ "$DEBUG" = "1" ]; then
+                  python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m pytest;
+               else
+                  pytest;
+               fi'
+    depends_on:
+      - test_db
+    volumes:
+      - .:/app
+    ports:
+      - 5678:5678
+    environment:
+      - DB_USER=test_udin
+      - DB_PASSWORD=test_udin
+      - DB_NAME=test_udin_db
+      - DB_HOST=test_db
+      - DB_PORT=5432
+
+  test_db:
+    image: postgres:17
+    tmpfs: 
+      - /var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=test_udin
+      - POSTGRES_PASSWORD=test_udin
+      - POSTGRES_DB=test_udin_db
