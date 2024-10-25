@@ -30,5 +30,8 @@ class BaseStats:
         stats = await cls.get_by_champion_id(champion_id=champion_id, session=session)
         for key, value in data.model_dump(exclude_unset=True).items():
             setattr(stats, key, value)
+
         session.add(stats)
+        session.commit()
+        session.refresh(stats)
         return stats

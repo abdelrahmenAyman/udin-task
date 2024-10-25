@@ -47,7 +47,6 @@ class TestBaseStats:
             champion_id=champions[0].id, data=BaseStatsUpdate(health=350), session=session
         )
         session.add(champions[0])
-        session.commit()
         session.expire(stats)
 
         updated_stats = session.get(models.BaseStats, stats.id)

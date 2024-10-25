@@ -57,8 +57,7 @@ async def delete_champion(champion_id: int, session: Session = Depends(get_sessi
 )
 async def update_champion(champion_id: int, data: ChampionUpdate, session: Session = Depends(get_session)):
     try:
-        champion = await actions.Champion.update(id=champion_id, data=data, session=session)
-        return champion
+        return await actions.Champion.update(id=champion_id, data=data, session=session)
     except RecordDoesNotExist:
         raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")
 
@@ -72,8 +71,6 @@ async def update_champion(champion_id: int, data: ChampionUpdate, session: Sessi
 async def update_champion_base_stats(champion_id: int, data: BaseStatsUpdate, session=Depends(get_session)):
     try:
         stats = await actions.BaseStats.update(champion_id=champion_id, data=data, session=session)
-        session.commit()
-        session.refresh(stats)
         return stats.champion
     except RecordDoesNotExist:
         raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")
