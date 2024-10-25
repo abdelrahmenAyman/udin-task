@@ -58,8 +58,6 @@ async def delete_champion(champion_id: int, session: Session = Depends(get_sessi
 async def update_champion(champion_id: int, data: ChampionUpdate, session: Session = Depends(get_session)):
     try:
         champion = await actions.Champion.update(id=champion_id, data=data, session=session)
-        session.commit()
-        session.refresh(champion)
         return champion
     except RecordDoesNotExist:
         raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")

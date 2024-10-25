@@ -44,7 +44,10 @@ class Champion:
         champion = await cls.get_by_id(id, session)
         for attr, value in data.model_dump(exclude_unset=True).items():
             setattr(champion, attr, value)
+
         session.add(champion)
+        session.commit()
+        session.refresh(champion)
         return champion
 
     @classmethod

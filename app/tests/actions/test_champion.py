@@ -51,7 +51,6 @@ class TestChampion:
         champion = await actions.Champion.update(
             id=champions[0].id, data=ChampionUpdate(name="Malphite"), session=session
         )
-        session.commit()
         session.expire(champion)
 
         fetched_champion = session.get(models.Champion, champions[0].id)
@@ -64,7 +63,6 @@ class TestChampion:
 
     async def test_update_champion_with_empty_data(self, session, champions):
         champion = await actions.Champion.update(id=champions[0].id, data=ChampionUpdate(), session=session)
-        session.commit()
         session.expire(champion)
 
         fetched_champion = session.get(models.Champion, champions[0].id)
