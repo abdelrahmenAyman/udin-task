@@ -4,7 +4,7 @@ from sqlmodel import Session
 from app import actions
 from app.dependencies import get_session
 from app.errors import RecordDoesNotExist
-from app.schemas.champion import ChampionCreate, ChampionRead
+from app.schemas.champion import ChampionCreate, ChampionRead, ChampionUpdate
 
 router = APIRouter()
 
@@ -45,5 +45,16 @@ async def delete_champion(champion_id: int, session: Session = Depends(get_sessi
     try:
         await actions.Champion.delete(id=champion_id, session=session)
         session.commit()
+    except RecordDoesNotExist:
+        raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")
+
+
+@router.patch("/champions/{champion_id}/")
+async def update_champion(champion_id: int, data: ChampionUpdate, session: Session = Depends(get_session)):
+    try:
+        champion = await actions.Champion.update(id=champion_id, data=data, session=session)
+        session.commit()
+        session.refresh(champion)
+        return champion
     except RecordDoesNotExist:
         raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")

@@ -4,7 +4,7 @@ from sqlmodel import select
 from app import actions, models
 from app.errors import RecordDoesNotExist
 from app.schemas.base_stats import BaseStatsCreate
-from app.schemas.champion import ChampionCreate
+from app.schemas.champion import ChampionCreate, ChampionUpdate
 
 
 @pytest.mark.asyncio
@@ -48,13 +48,27 @@ class TestChampion:
             assert fetched.id == champion.id
 
     async def test_update_champion(self, session, champions):
-        champion = await actions.Champion.update(id=champions[0].id, name="Malphite", session=session)
+        champion = await actions.Champion.update(
+            id=champions[0].id, data=ChampionUpdate(name="Malphite"), session=session
+        )
         session.commit()
         session.expire(champion)
 
         fetched_champion = session.get(models.Champion, champions[0].id)
         assert fetched_champion.id == champions[0].id
         assert fetched_champion.name == "Malphite"
+
+    async def test_update_champion_invalid_id(self, session, champions):
+        with pytest.raises(RecordDoesNotExist):
+            await actions.Champion.update(id=100, data=ChampionUpdate(name="Malphite"), session=session)
+
+    async def test_update_champion_with_empty_data(self, session, champions):
+        champion = await actions.Champion.update(id=champions[0].id, data=ChampionUpdate(), session=session)
+        session.commit()
+        session.expire(champion)
+
+        fetched_champion = session.get(models.Champion, champions[0].id)
+        assert fetched_champion.name == champions[0].name
 
     async def test_delete_champion_valid_id(self, session, champions):
         await actions.Champion.delete(id=champions[0].id, session=session)
