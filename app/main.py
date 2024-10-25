@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.db import initialize_db
-from app.models.db import *
+from app.models import *
 from app.settings import settings
 
 

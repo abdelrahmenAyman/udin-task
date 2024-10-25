@@ -1,8 +1,7 @@
 import pytest
 
-from app import actions
+from app import actions, models
 from app.errors import RecordDoesNotExist
-from app.models import db as models
 
 
 @pytest.mark.asyncio

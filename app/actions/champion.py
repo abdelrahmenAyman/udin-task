@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 
 from app.errors import RecordDoesNotExist
-from app.models import db as models
+from app import models
 
 
 class Champion:

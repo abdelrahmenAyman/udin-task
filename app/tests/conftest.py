@@ -4,7 +4,7 @@ from sqlmodel import Session
 
 from app.db import dispose_db, engine, initialize_db
 from app.main import app
-from app.models import db as models
+from app import models
 
 
 @pytest.fixture
