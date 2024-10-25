@@ -12,7 +12,7 @@ class Champion(Base, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
 
-    base_stats: "BaseStats" = Relationship(back_populates="champion")
+    base_stats: "BaseStats" = Relationship(back_populates="champion", cascade_delete=True)
 
 
 class BaseStats(Base, table=True):

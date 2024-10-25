@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 
-from app.errors import RecordDoesNotExist
 from app import models
+from app.errors import RecordDoesNotExist
 
 
 class Champion:
@@ -29,3 +29,8 @@ class Champion:
         champion.name = name
         session.add(champion)
         return champion
+
+    @classmethod
+    async def delete(cls, id, session: Session):
+        champion = await cls.get_by_id(id, session)
+        session.delete(champion)
