@@ -19,10 +19,10 @@ class BaseStats(Base, table=True):
     """A simplified version of a champion's base stats"""
 
     id: int = Field(default=None, primary_key=True)
-    health: float
-    mana: float
-    attack_damage: float
-    armor: float
+    health: int
+    mana: int
+    attack_damage: int
+    armor: int
 
-    champion_id: int = Field(foreign_key="my_schema.champion.id")
+    champion_id: int | None = Field(default=None, foreign_key="my_schema.champion.id")
     champion: Champion = Relationship(back_populates="base_stats", sa_relationship_kwargs={"uselist": False})
