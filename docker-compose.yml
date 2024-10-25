@@ -9,7 +9,6 @@ services:
       - ./:/app
     depends_on:
       - db
-      - redis
     environment:
       - DB_USER=udin
       - DB_PASSWORD=udin
