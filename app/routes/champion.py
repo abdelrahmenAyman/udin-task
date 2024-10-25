@@ -49,7 +49,12 @@ async def delete_champion(champion_id: int, session: Session = Depends(get_sessi
         raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")
 
 
-@router.patch("/champions/{champion_id}/")
+@router.patch(
+    "/champions/{champion_id}/",
+    status_code=200,
+    response_model=ChampionRead,
+    responses={404: {"detail": "Champion with ID not found"}},
+)
 async def update_champion(champion_id: int, data: ChampionUpdate, session: Session = Depends(get_session)):
     try:
         champion = await actions.Champion.update(id=champion_id, data=data, session=session)
