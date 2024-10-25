@@ -34,3 +34,16 @@ async def read_champion(champion_id: int, session: Session = Depends(get_session
         return await actions.Champion.get_by_id(id=champion_id, session=session)
     except RecordDoesNotExist:
         raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")
+
+
+@router.delete(
+    "/champions/{champion_id}/",
+    status_code=204,
+    responses={"404": {"detail": "Champion with ID 0 not found"}},
+)
+async def delete_champion(champion_id: int, session: Session = Depends(get_session)):
+    try:
+        await actions.Champion.delete(id=champion_id, session=session)
+        session.commit()
+    except RecordDoesNotExist:
+        raise HTTPException(status_code=404, detail=f"Champion with ID {champion_id} not found")

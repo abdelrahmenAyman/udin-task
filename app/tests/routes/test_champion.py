@@ -1,4 +1,7 @@
 import pytest
+from sqlmodel import select
+
+from app import models
 
 
 @pytest.mark.asyncio
@@ -53,5 +56,17 @@ class TestChampion:
 
     async def test_read_champion_does_not_exist(self, client, champions):
         response = client.get(f"{self.url}/100/")
+
+        assert response.status_code == 404
+
+    async def test_delete_champion_success(self, client, session, champions):
+        response = client.delete(f"{self.url}/{champions[0].id}/")
+        fetched = session.exec(select(models.Champion).where(models.Champion.id == champions[0].id)).all()
+
+        assert response.status_code == 204
+        assert len(fetched) == 0
+
+    async def test_delete_champion_does_not_exist(self, client, champions):
+        response = client.delete(f"{self.url}/100/")
 
         assert response.status_code == 404
