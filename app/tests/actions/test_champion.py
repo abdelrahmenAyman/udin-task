@@ -39,6 +39,14 @@ class TestChampion:
             assert fetched.name == champion.name
             assert fetched.id == champion.id
 
+    async def test_list_champions_with_offset_and_limit(self, session, champions):
+        fetched_champions = await actions.Champion.list(offset=1, limit=2, session=session)
+
+        assert len(fetched_champions) == 2
+        for fetched, champion in zip(fetched_champions, champions[1:]):
+            assert fetched.name == champion.name
+            assert fetched.id == champion.id
+
     async def test_update_champion(self, session, champions):
         champion = await actions.Champion.update(id=champions[0].id, name="Malphite", session=session)
         session.commit()

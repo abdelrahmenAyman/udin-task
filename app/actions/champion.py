@@ -31,8 +31,13 @@ class Champion:
         return champion
 
     @classmethod
-    async def list(cls, session: Session) -> list[models.Champion]:
-        return list(session.exec(select(models.Champion)).all())
+    async def list(
+        cls,
+        session: Session,
+        offset: int = 0,
+        limit: int = 10,
+    ) -> list[models.Champion]:
+        return list(session.exec(select(models.Champion).offset(offset).limit(limit)).all())
 
     @classmethod
     async def update(cls, id: int, name: str, session: Session) -> models.Champion:

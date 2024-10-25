@@ -33,10 +33,10 @@ class TestBaseStats:
             )
 
     async def test_get_stats_by_champion_id(self, session, champions):
-        stats = await actions.BaseStats.get_by_champion_id(champion_id=champions[2].id, session=session)
-        session.add(champions[2])
+        stats = await actions.BaseStats.get_by_champion_id(champion_id=champions[0].id, session=session)
+        session.add(champions[0])
 
-        assert stats.id == champions[2].base_stats.id
+        assert stats.id == champions[0].base_stats.id
 
     async def test_get_stats_by_invalid_champion_id(self, session):
         with pytest.raises(RecordDoesNotExist):
@@ -44,9 +44,9 @@ class TestBaseStats:
 
     async def test_update_champion_stats_with_valid_champion_id(self, session, champions):
         stats = await actions.BaseStats.update(
-            champion_id=champions[2].id, data=BaseStatsUpdate(health=350), session=session
+            champion_id=champions[0].id, data=BaseStatsUpdate(health=350), session=session
         )
-        session.add(champions[2])
+        session.add(champions[0])
         session.commit()
         session.expire(stats)
 
@@ -55,7 +55,7 @@ class TestBaseStats:
         assert updated_stats.health == 350
 
         update_stats_dict = updated_stats.model_dump()
-        for field, original_value in champions[2].base_stats.model_dump().items():
+        for field, original_value in champions[0].base_stats.model_dump().items():
             if field != "health":
                 assert update_stats_dict[field] == original_value
 
