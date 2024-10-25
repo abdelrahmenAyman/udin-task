@@ -1,8 +1,7 @@
 import pytest
 
-from app import actions
+from app import actions, models
 from app.errors import RecordDoesNotExist
-from app.models import db as models
 
 
 @pytest.mark.asyncio
@@ -10,6 +9,7 @@ class TestChampion:
     async def test_create_champion(self, session):
         champion = await actions.Champion.create(name="Sylas", session=session)
         session.commit()
+        session.expire(champion)
 
         fetched_champion = session.get(models.Champion, champion.id)
 
@@ -37,8 +37,9 @@ class TestChampion:
             assert fetched.id == champion.id
 
     async def test_update_champion(self, session, champions):
-        await actions.Champion.update(id=champions[0].id, name="Malphite", session=session)
+        champion = await actions.Champion.update(id=champions[0].id, name="Malphite", session=session)
         session.commit()
+        session.expire(champion)
 
         fetched_champion = session.get(models.Champion, champions[0].id)
         assert fetched_champion.id == champions[0].id

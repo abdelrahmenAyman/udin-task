@@ -2,9 +2,9 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
+from app import models
 from app.db import dispose_db, engine, initialize_db
 from app.main import app
-from app.models import db as models
 
 
 @pytest.fixture
@@ -32,6 +32,8 @@ def champions(session) -> list[models.Champion]:
     champions.append(models.Champion(name="Yone"))
     champions.append(models.Champion(name="zed"))
     champions.append(models.Champion(name="Ahri"))
+    champions[2].base_stats = models.BaseStats(health=500, mana=0, attack_damage=20, armor=30)
+    champions[3].base_stats = models.BaseStats(health=520, mana=200, attack_damage=10, armor=25)
 
     session.add_all(champions)
     session.commit()
