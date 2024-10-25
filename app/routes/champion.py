@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 
 from app import actions
@@ -14,5 +14,9 @@ async def create_champion(data: ChampionCreate, session: Session = Depends(get_s
 
 
 @router.get("/champions/", response_model=list[ChampionRead])
-async def list_champions(session: Session = Depends(get_session)):
-    return await actions.Champion.list(session=session)
+async def list_champions(
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=10, lt=100),
+    session: Session = Depends(get_session),
+):
+    return await actions.Champion.list(offset=offset, limit=limit, session=session)

@@ -31,3 +31,13 @@ class TestChampion:
         assert isinstance(json_response, list)
         assert "name" in json_response[0]
         assert "base_stats" in json_response[0]
+
+    async def test_list_champions_offset_lt_zero(self, client, champions):
+        response = client.get(f"{self.url}?offset=-1&limit=10")
+
+        assert response.status_code == 422
+
+    async def test_list_champions_limit_gt_100(self, client, champions):
+        response = client.get(f"{self.url}?offset=0&limit=101")
+
+        assert response.status_code == 422
