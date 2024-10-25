@@ -3,6 +3,8 @@ from sqlmodel import select
 
 from app import actions, models
 from app.errors import RecordDoesNotExist
+from app.schemas.base_stats import BaseStatsCreate
+from app.schemas.champion import ChampionCreate
 
 
 @pytest.mark.asyncio
@@ -61,3 +63,17 @@ class TestChampion:
     async def test_delete_champion_invalid_id(self, session):
         with pytest.raises(RecordDoesNotExist):
             await actions.Champion.delete(id=100, session=session)
+
+    async def create_champion_with_base_stats(self, session):
+        data = ChampionCreate(
+            name="Sylas", base_stats=BaseStatsCreate(health=500, mana=240, attack_damage=65, armor=35)
+        )
+        champion = await actions.Champion.create_with_base_stats(data=data, session=session)
+        session.commit()
+        session.expire(champion)
+
+        fetched_champion = session.get(models.Champion, champion.id)
+
+        assert fetched_champion.name == "Sylas"
+        assert fetched_champion.base_stats.health == 500
+        assert fetched_champion.base_stats.mana == 240

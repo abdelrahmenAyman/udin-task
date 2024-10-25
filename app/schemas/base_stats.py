@@ -13,3 +13,11 @@ class BaseStatsUpdate(BaseModel):
     mana: int | None = None
     attack_damage: int | None = None
     armor: int | None = None
+
+
+class BaseStatsRead(BaseModel):
+    id: int
+    health: int
+    mana: int
+    attack_damage: int
+    armor: int

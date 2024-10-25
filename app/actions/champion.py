@@ -1,7 +1,9 @@
 from sqlmodel import Session, select
 
 from app import models
+from app.actions.base_stats import BaseStats
 from app.errors import RecordDoesNotExist
+from app.schemas.champion import ChampionCreate
 
 
 class Champion:
@@ -10,6 +12,15 @@ class Champion:
         champion = models.Champion(name=name)
         session.add(champion)
         session.flush()
+        return champion
+
+    @classmethod
+    async def create_with_base_stats(cls, data: ChampionCreate, session: Session) -> models.Champion:
+        champion = await cls.create(data.name, session)
+        await BaseStats.create(champion_id=champion.id, data=data.base_stats, session=session)
+        session.add(champion)
+        session.commit()
+        session.refresh(champion)
         return champion
 
     @classmethod
