@@ -70,3 +70,17 @@ class TestChampion:
         response = client.delete(f"{self.url}/100/")
 
         assert response.status_code == 404
+
+    async def test_update_champion_success(self, client, champions, session):
+        response = client.patch(f"{self.url}/{champions[0].id}", json={"name": "Jax"})
+        session.expire(champions[0])
+        fetched_champion = session.get(models.Champion, champions[0].id)
+
+        assert response.status_code == 200
+        assert fetched_champion.name == "Jax"
+        assert response.json()["name"] == "Jax"
+
+    async def test_update_champion_does_not_exist(self, client, champions):
+        response = client.patch(f"{self.url}/100/", json={"name": "Jax"})
+
+        assert response.status_code == 404

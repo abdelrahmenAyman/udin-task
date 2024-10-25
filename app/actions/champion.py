@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 from app import models
 from app.actions.base_stats import BaseStats
 from app.errors import RecordDoesNotExist
-from app.schemas.champion import ChampionCreate
+from app.schemas.champion import ChampionCreate, ChampionUpdate
 
 
 class Champion:
@@ -40,9 +40,10 @@ class Champion:
         return list(session.exec(select(models.Champion).offset(offset).limit(limit)).all())
 
     @classmethod
-    async def update(cls, id: int, name: str, session: Session) -> models.Champion:
+    async def update(cls, id: int, data: ChampionUpdate, session: Session) -> models.Champion:
         champion = await cls.get_by_id(id, session)
-        champion.name = name
+        for attr, value in data.model_dump(exclude_unset=True).items():
+            setattr(champion, attr, value)
         session.add(champion)
         return champion
 

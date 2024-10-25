@@ -8,6 +8,10 @@ class ChampionCreate(BaseModel):
     base_stats: BaseStatsCreate
 
 
+class ChampionUpdate(BaseModel):
+    name: str | None = None
+
+
 class ChampionRead(BaseModel):
     id: int
     name: str
