@@ -1,4 +1,5 @@
 import pytest
+from sqlmodel import select
 
 from app import actions, models
 from app.errors import RecordDoesNotExist
@@ -44,3 +45,19 @@ class TestChampion:
         fetched_champion = session.get(models.Champion, champions[0].id)
         assert fetched_champion.id == champions[0].id
         assert fetched_champion.name == "Malphite"
+
+    async def test_delete_champion_valid_id(self, session, champions):
+        await actions.Champion.delete(id=champions[0].id, session=session)
+        session.commit()
+
+        champions_list = session.exec(select(models.Champion).where(models.Champion.id == champions[0].id)).all()
+        stats_list = session.exec(
+            select(models.BaseStats).where(models.BaseStats.champion_id == champions[0].id)
+        ).all()
+
+        assert len(champions_list) == 0
+        assert len(stats_list) == 0
+
+    async def test_delete_champion_invalid_id(self, session):
+        with pytest.raises(RecordDoesNotExist):
+            await actions.Champion.delete(id=100, session=session)
