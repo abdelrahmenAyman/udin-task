@@ -27,9 +27,18 @@ def setup_db():
 
 @pytest.fixture
 def champions(session) -> list[models.Champion]:
-    champions = [models.Champion(name="Sylas"), models.Champion(name="Yone")]
+    champions = [
+        models.Champion(name="Sylas"),
+        models.Champion(name="Yone"),
+        models.Champion(name="Ahri"),
+        models.Champion(name="Zed"),
+        models.Champion(name="Jinx"),
+    ]
     champions[0].base_stats = models.BaseStats(health=500, mana=0, attack_damage=20, armor=30)
     champions[1].base_stats = models.BaseStats(health=520, mana=200, attack_damage=10, armor=25)
+    champions[2].base_stats = models.BaseStats(health=520, mana=200, attack_damage=10, armor=25)
+    champions[4].base_stats = models.BaseStats(health=520, mana=0, attack_damage=20, armor=25)
+    champions[3].base_stats = models.BaseStats(health=520, mana=200, attack_damage=10, armor=25)
 
     session.add_all(champions)
     session.commit()
