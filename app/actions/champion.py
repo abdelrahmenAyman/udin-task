@@ -1,18 +1,22 @@
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from app import models
 from app.actions.base_stats import BaseStats
-from app.errors import RecordDoesNotExist
+from app.errors import RecordAlreadyExists, RecordDoesNotExist
 from app.schemas.champion import ChampionCreate, ChampionUpdate
 
 
 class Champion:
     @classmethod
     async def create(cls, name: str, session: Session) -> models.Champion:
-        champion = models.Champion(name=name)
-        session.add(champion)
-        session.flush()
-        return champion
+        try:
+            champion = models.Champion(name=name)
+            session.add(champion)
+            session.flush()
+            return champion
+        except IntegrityError:
+            raise RecordAlreadyExists(f"Champion with name {name} already exists.")
 
     @classmethod
     async def create_with_base_stats(cls, data: ChampionCreate, session: Session) -> models.Champion:

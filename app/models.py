@@ -10,7 +10,7 @@ class Champion(Base, table=True):
     """This model represents a champion in League of legends game (look it up :D)"""
 
     id: int | None = Field(default=None, primary_key=True)
-    name: str
+    name: str = Field(unique=True)
 
     base_stats: "BaseStats" = Relationship(back_populates="champion", cascade_delete=True)
 

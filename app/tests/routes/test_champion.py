@@ -25,6 +25,22 @@ class TestChampion:
         assert "name" in json_response
         assert "base_stats" in json_response
 
+    async def test_create_champion_with_same_name(self, client, session):
+        session.add(models.Champion(name="Sylas"))
+        session.commit()
+        data = {
+            "name": "Sylas",
+            "base_stats": {
+                "health": 500,
+                "mana": 240,
+                "attack_damage": 65,
+                "armor": 35,
+            },
+        }
+        response = client.post(self.url, json=data)
+
+        assert response.status_code == 400
+
     async def test_list_champions(self, client, champions):
         response = client.get(self.url)
         json_response = response.json()

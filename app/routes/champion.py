@@ -3,16 +3,21 @@ from sqlmodel import Session
 
 from app import actions
 from app.dependencies import get_session
-from app.errors import RecordDoesNotExist
+from app.errors import RecordAlreadyExists, RecordDoesNotExist
 from app.schemas.base_stats import BaseStatsUpdate
 from app.schemas.champion import ChampionCreate, ChampionRead, ChampionUpdate
 
 router = APIRouter()
 
 
-@router.post("/champions/", status_code=201, response_model=ChampionRead)
+@router.post(
+    "/champions/", status_code=201, response_model=ChampionRead, responses={400: {"detail": "Champion already exists"}}
+)
 async def create_champion(data: ChampionCreate, session: Session = Depends(get_session)):
-    return await actions.Champion.create_with_base_stats(data=data, session=session)
+    try:
+        return await actions.Champion.create_with_base_stats(data=data, session=session)
+    except RecordAlreadyExists:
+        raise HTTPException(status_code=400, detail="Champion with the same name already exists")
 
 
 @router.get("/champions/", status_code=200, response_model=list[ChampionRead])

@@ -2,7 +2,7 @@ import pytest
 from sqlmodel import select
 
 from app import actions, models
-from app.errors import RecordDoesNotExist
+from app.errors import RecordAlreadyExists, RecordDoesNotExist
 from app.schemas.base_stats import BaseStatsCreate
 from app.schemas.champion import ChampionCreate, ChampionUpdate
 
@@ -19,6 +19,12 @@ class TestChampion:
         assert fetched_champion.name == "Sylas"
         assert fetched_champion.id == champion.id
         assert fetched_champion.base_stats is None
+
+    async def test_create_champion_with_Same_name(self, session):
+        session.add(models.Champion(name="Sylas"))
+        session.commit()
+        with pytest.raises(RecordAlreadyExists):
+            await actions.Champion.create(name="Sylas", session=session)
 
     async def test_get_champion_by_id_success(self, session, champions):
         session.add(champions[0])
