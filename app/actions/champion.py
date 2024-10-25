@@ -51,3 +51,4 @@ class Champion:
     async def delete(cls, id, session: Session):
         champion = await cls.get_by_id(id, session)
         session.delete(champion)
+        session.commit()

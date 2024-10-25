@@ -72,7 +72,6 @@ class TestChampion:
 
     async def test_delete_champion_valid_id(self, session, champions):
         await actions.Champion.delete(id=champions[0].id, session=session)
-        session.commit()
 
         champions_list = session.exec(select(models.Champion).where(models.Champion.id == champions[0].id)).all()
         stats_list = session.exec(
