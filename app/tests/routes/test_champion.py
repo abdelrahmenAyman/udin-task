@@ -84,3 +84,18 @@ class TestChampion:
         response = client.patch(f"{self.url}/100/", json={"name": "Jax"})
 
         assert response.status_code == 404
+
+    async def test_update_champion_base_stats_success(self, client, champions, session):
+        response = client.patch(f"{self.url}/{champions[0].id}/base-stats", json={"health": 550})
+        session.expire(champions[0])
+        fetched_champion = session.get(models.Champion, champions[0].id)
+
+        assert response.status_code == 200
+        assert fetched_champion.base_stats.health == 550
+        assert fetched_champion.base_stats.mana == champions[0].base_stats.mana
+        assert response.json()["base_stats"]["health"] == 550
+
+    async def test_update_champion_base_stats_does_not_exist(self, client, champions):
+        response = client.patch(f"{self.url}/100/base-stats", json={"health": 550})
+
+        assert response.status_code == 404
